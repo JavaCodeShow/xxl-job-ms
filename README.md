@@ -26,7 +26,8 @@ public void mqJobHandler() throws Exception {
    
    XxlJobHelper.log("接收到xxl-job调度中心的定时任务，任务参数 = [{}]", jobParam);
 
-   rocketMQTemplate.syncSend("xxl-job-ms:ORDER_CANCEL", jobParam);
+   String destionation = String.format("%s:%s", "xxl-job-ms", jobParam);
+   rocketMQTemplate.syncSend(destionation, jobParam);
    
    XxlJobHelper.log("发送定时任务消息success，任务参数 = [{}]", jobParam);
 
@@ -39,7 +40,7 @@ public void mqJobHandler() throws Exception {
 
 ## 四、定时任务业务逻辑执行
 
-到了这里也就是消息消息，执行真正的业务逻辑了。
+定时任务服务通过RocketMQ将消息发送出来之后，各个服务只需要引入RocketMQ消费消息。执行真正的业务逻辑了。
 
 ```
 @Slf4j
@@ -54,9 +55,7 @@ public class OrderCancelListener implements RocketMQListener<String> {
 }
 ```
 
+任务调度中心和定时任务服务只需要一次部署。之后就是一劳永逸了。后期业务服务接入定时任务就和消费消息一样简单。
 
-
-
-
-
+是不是很方便啊！！！
 
