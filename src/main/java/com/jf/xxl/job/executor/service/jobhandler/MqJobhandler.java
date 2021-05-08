@@ -34,7 +34,8 @@ public class MqJobhandler {
 		String jobParam = XxlJobHelper.getJobParam();
 		XxlJobHelper.log("接收到xxl-job调度中心的定时任务，任务参数 = [{}]", jobParam);
 		log.info("接收到xxl-job调度中心的定时任务，任务参数 = [{}]", jobParam);
-		rocketMQTemplate.syncSend("xxl-job-ms:ORDER_CANCEL", jobParam);
+		String destionation = String.format("%s:%s", "xxl-job-ms", jobParam);
+		rocketMQTemplate.syncSend(destionation, jobParam);
 		XxlJobHelper.log("发送定时任务消息success，任务参数 = [{}]", jobParam);
 		log.info("发送定时任务消息success，任务参数 = [{}]", jobParam);
 
